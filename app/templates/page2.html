@@ -1,0 +1,335 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+       .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: left;
+            max-width: 80%;
+        }
+        .popup h2 {
+            margin-top: 0;
+        }
+        .popup ul {
+            padding: 0;
+            list-style: none;
+        }
+        .popup li {
+            margin-bottom: 10px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>House Price Prediction</h1>
+    <form action="/predict" method="post">
+        <label for="city">City:</label>
+        <select name="city" required>
+            <option value="Delhi">Delhi</option>
+            <option value="Banglore">Banglore</option>
+            <option value="Pune">Pune</option>
+        </select><br>
+        <label for="area">Area (in square feet):</label>
+        <input type="text" pattern="\d+(\.\d{1,2})?" name="area" required><br>
+        <label for="bhk">BHK:</label>
+        <select name="bhk" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select><br>
+        <label for="bathroom">Bathroom:</label>
+        <input type="number" name="bathroom" required><br>
+        <label for="parking">Parking:</label>
+        <select name="parking" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select><br>
+        <label for="furnishing">Furnishing:</label>
+        <select name="furnishing" required>
+            <option value="Furnished">Furnished</option>
+            <option value="Semi Furnished">Semi Furnished</option>
+            <option value="Unfurnished">Unfurnished</option>
+        </select><br>
+        <input type="submit" value="Predict">
+    </form>
+    
+    {% if result %}
+    <h2>Predicted Result:</h2>
+    <ul>
+        {% for key, value in result.items() %}
+            <li>{{ key }}: {{ value }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Your existing form submission logic here
+        // Once you have the predicted result, call the showPopup function
+        const result = { /* Replace with your predicted result data */ };
+        showPopup(result);
+    });
+
+    function showPopup(result) {
+        const overlay = document.createElement('div');
+        overlay.classList.add('overlay');
+        overlay.onclick = hidePopup;
+
+        const popup = document.createElement('div');
+        popup.classList.add('popup');
+        const closeBtn = document.createElement('span');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.classList.add('close');
+        closeBtn.onclick = hidePopup;
+        popup.appendChild(closeBtn);
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Predicted Result';
+        popup.appendChild(h2);
+        const ul = document.createElement('ul');
+        for (const key in result) {
+            const li = document.createElement('li');
+            li.textContent = `${key}: ${result[key]}`;
+            ul.appendChild(li);
+        }
+        popup.appendChild(ul);
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+    }
+
+    function hidePopup() {
+        const overlay = document.querySelector('.overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+</script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.prediction-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+/* Popup styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>House Price Prediction</h1>
+        <form action="/predict" method="post" class="prediction-form" id="predictionForm">
+            <div class="form-group">
+                <label for="city">City:</label>
+                <select name="city" required>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Banglore">Banglore</option>
+                    <option value="Pune">Pune</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="area">Area (in square feet):</label>
+                <input type="text" pattern="\d+(\.\d{1,2})?" name="area" required>
+            </div>
+            <div class="form-group">
+                <label for="bhk">BHK:</label>
+                <select name="bhk" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bathroom">Bathroom:</label>
+                <input type="number" name="bathroom" required>
+            </div>
+            <div class="form-group">
+                <label for="parking">Parking:</label>
+                <select name="parking" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="furnishing">Furnishing:</label>
+                <select name="furnishing" required>
+                    <option value="Furnished">Furnished</option>
+                    <option value="Semi Furnished">Semi Furnished</option>
+                    <option value="Unfurnished">Unfurnished</option>
+                </select>
+            </div>
+            <input type="submit" value="Predict">
+        </form>
+    </div>
+
+    <div class="overlay" id="resultOverlay">
+        <div class="popup" id="resultPopup">
+            <span class="close" id="closePopup">&times;</span>
+            <h2>Predicted Result:</h2>
+            <ul id="resultList">
+               
+            </ul>
+        </div>
+    </div>
+
+    <script>
+  const predictionForm = document.getElementById('predictionForm');
+const resultOverlay = document.getElementById('resultOverlay');
+const resultPopup = document.getElementById('resultPopup');
+const resultList = document.getElementById('resultList');
+const closePopup = document.getElementById('closePopup');
+
+predictionForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(predictionForm);
+    fetch('/predict', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showPredictionResults(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+closePopup.addEventListener('click', function() {
+    hidePredictionResults();
+});
+
+function showPredictionResults(results) {
+    resultList.innerHTML = '';
+    for (let key in results) {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${key}: ${results[key]}`;
+        resultList.appendChild(listItem);
+    }
+    resultOverlay.style.display = 'flex';
+}
+
+function hidePredictionResults() {
+    resultOverlay.style.display = 'none';
+}
+    </script>
+</body>
+</html>
